@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>  
+<!DOCTYPE hibernate-mapping PUBLIC  
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"  
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">  
+  
+ <hibernate-mapping>  
+  <class name="dao.ledger.Ledger" table="TB_Ledger">  
+    <id name="invoiceNumber" column="invoice_number">  
+     <generator class="increment"></generator>  
+    </id>  
+	       
+    <property name="customerId" column="customer_id"></property>  
+    <property name="date" column="date"></property>  
+    <property name="billingType" column="bill_type"></property>
+    <property name="billAmount" column="bill_amount"></property>
+    <property name="paidAmount" column="paid_amount"></property>
+    <property name="debit" column="debit"></property>
+    <property name="credit" column="credit"></property>
+    <property name="balance" column="balance"></property>
+    <property name="description" column="description"></property>
+    
+    <set name="soldItems" cascade="all">
+    	<key column="invoice_number" />
+    	<one-to-many class="dao.ledger.SoldItem" />
+   	</set>
+    
+  </class>  
+            
+ </hibernate-mapping>  

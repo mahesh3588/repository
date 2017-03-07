@@ -1,0 +1,9 @@
+search customer functionality
+enter notes in bill
+keep bill table in dynamic size
+-----item search scope is loosing make it stable
+make price and discount editable while creating bill
+-----profit shown on sale panel maake it excluding discount
+remove blank or null check when creates quoatations
+search bills and quoatations by customer name and date
+vendor bill adding into 

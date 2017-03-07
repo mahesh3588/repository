@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>  
+<!DOCTYPE hibernate-mapping PUBLIC  
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"  
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">  
+  
+ <hibernate-mapping>  
+  <class name="dao.ledger.quotation.Quotation" table="TB_Quotation">  
+    <id name="id" column="id">  
+     <generator class="increment"></generator>  
+    </id>  
+	
+    <property name="customerId" column="customer_id"></property>  
+    <property name="date" column="date"></property>  
+    <property name="quotationAmount" column="quotation_amount"></property>
+    <property name="description" column="description"></property>
+    
+    <set name="quotationItem" cascade="all">
+    	<key column="quotation_id" />
+    	<one-to-many class="dao.ledger.quotation.QuotationItem" />
+   	</set>
+    
+  </class>  
+            
+ </hibernate-mapping>  
