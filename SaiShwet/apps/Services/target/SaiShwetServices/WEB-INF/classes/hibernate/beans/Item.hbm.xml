@@ -9,8 +9,8 @@
      <generator class="increment"></generator>  
     </id>  
             
-    <property name="name" column="name"></property>  
-    <property name="salePrice" column="sale_price"></property>  
+    <property name="name" column="name" unique="true" not-null="true"  ></property>  
+    <property name="salePrice" column="sale_price" ></property>  
     <property name="purchasePrice" column="purchase_price"></property>
     <property name="vat" column="vat"></property>
     <property name="discount" column="discount"></property>

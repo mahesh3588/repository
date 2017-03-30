@@ -15,6 +15,7 @@
 			<scope>test</scope>
 		</dependency>
 
+	
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -77,8 +78,7 @@
 			<artifactId>jersey-json</artifactId>
 			<version>1.19.2</version>
 		</dependency> -->
-
-
+	
 
 	</dependencies>
 	<build>

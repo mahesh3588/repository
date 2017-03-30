@@ -8,7 +8,7 @@
     <id name="id">  
      <generator class="increment"></generator>  
     </id>  
-    <property name="itemId" column="item_id"></property>  
+    <property name="itemId" column="item_id" not-null="true"  ></property>  
     <property name="availableStock" column="available"></property>  
   </class>  
             

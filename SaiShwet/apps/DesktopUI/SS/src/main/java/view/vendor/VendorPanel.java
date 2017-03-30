@@ -38,6 +38,7 @@ public class VendorPanel extends JPanel {
         buttonView2 = new javax.swing.JButton();
         buttonModify2 = new javax.swing.JButton();
         buttonDelete2 = new javax.swing.JButton();
+        buttonAddBiils = new javax.swing.JButton();
         bodyPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -69,18 +70,26 @@ public class VendorPanel extends JPanel {
 
         buttonDelete2.setText("Delete");
 
+        buttonAddBiils.setText("Add Bills");
+        buttonAddBiils.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAddBiilsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout menuPanel2Layout = new javax.swing.GroupLayout(menuPanel2);
         menuPanel2.setLayout(menuPanel2Layout);
         menuPanel2Layout.setHorizontalGroup(
             menuPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(menuPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(menuPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(buttonAdd2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonModify2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(menuPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(buttonAddBiils, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(buttonDelete2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonView2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                    .addComponent(buttonModify2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonView2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonAdd2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         menuPanel2Layout.setVerticalGroup(
             menuPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -93,21 +102,13 @@ public class VendorPanel extends JPanel {
                 .addComponent(buttonModify2)
                 .addGap(18, 18, 18)
                 .addComponent(buttonDelete2)
-                .addContainerGap(168, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(buttonAddBiils)
+                .addContainerGap(69, Short.MAX_VALUE))
         );
 
         bodyPanel.setBackground(new java.awt.Color(204, 204, 255));
-
-        javax.swing.GroupLayout bodyPanelLayout = new javax.swing.GroupLayout(bodyPanel);
-        bodyPanel.setLayout(bodyPanelLayout);
-        bodyPanelLayout.setHorizontalGroup(
-            bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 570, Short.MAX_VALUE)
-        );
-        bodyPanelLayout.setVerticalGroup(
-            bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        bodyPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -176,10 +177,27 @@ public class VendorPanel extends JPanel {
 //        revalidate();
     }//GEN-LAST:event_buttonModifyActionPerformed
 
+    private void buttonAddBiilsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddBiilsActionPerformed
+        JPanel containerPanale=new JPanel();
+        containerPanale.setBackground(Color.BLUE);
+        containerPanale.setSize(bodyPanel.getSize());
+        containerPanale.setLayout(new BorderLayout());
+        bodyPanel.setLayout(new BorderLayout());
+        
+        JPanel addVendorBills=new AddVendorBills();
+        addVendorBills.setSize(containerPanale.getSize());
+        containerPanale.add(addVendorBills, BorderLayout.CENTER);
+        bodyPanel.removeAll();
+        bodyPanel.add(containerPanale);
+        repaint();
+        revalidate();
+    }//GEN-LAST:event_buttonAddBiilsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bodyPanel;
     private javax.swing.JButton buttonAdd2;
+    private javax.swing.JButton buttonAddBiils;
     private javax.swing.JButton buttonDelete2;
     private javax.swing.JButton buttonModify2;
     private javax.swing.JButton buttonView2;

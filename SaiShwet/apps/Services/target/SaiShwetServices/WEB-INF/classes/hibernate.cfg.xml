@@ -21,6 +21,10 @@
     
     <mapping resource="hibernate/beans/Ledger.hbm.xml"/>
     <mapping resource="hibernate/beans/SoldItem.hbm.xml"/>
+    <mapping resource="hibernate/beans/Quotation.hbm.xml"/>
+    <mapping resource="hibernate/beans/QuotationItem.hbm.xml"/>
+    
+    <mapping resource="hibernate/beans/Vendor.hbm.xml"/>
     
     
   </session-factory>

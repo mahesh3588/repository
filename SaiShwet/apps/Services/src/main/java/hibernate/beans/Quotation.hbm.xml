@@ -9,7 +9,7 @@
      <generator class="increment"></generator>  
     </id>  
 	
-    <property name="customerId" column="customer_id"></property>  
+    <property name="customerId" column="customer_id" not-null="true"  ></property>  
     <property name="date" column="date"></property>  
     <property name="quotationAmount" column="quotation_amount"></property>
     <property name="description" column="description"></property>

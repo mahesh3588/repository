@@ -7,3 +7,7 @@ make price and discount editable while creating bill
 remove blank or null check when creates quoatations
 search bills and quoatations by customer name and date
 vendor bill adding into 
+
+22-03-2017
+
+Make discount filed editable and calculate bill accordingly
