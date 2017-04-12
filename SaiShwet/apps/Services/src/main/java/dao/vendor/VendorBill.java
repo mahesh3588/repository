@@ -8,28 +8,16 @@ package dao.vendor;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 /**
  *
  * @author Owner
  */
-@Entity
-@Table(name="TB_Vendor_Bill")
+
 public class VendorBill {
     
-	@Id
-	@Column(name="billId")
-	@SequenceGenerator(sequenceName="seq_vendor_bill", name="seq_vendor_bill", allocationSize=1,initialValue=1)
+	
     private Long billId;
 	
-	@OneToMany
     private List<VendorItem>  billItemList;
     private Double totalPurchaseAmount=0.0;
     private Double totalDiscountAmount=0.0;
