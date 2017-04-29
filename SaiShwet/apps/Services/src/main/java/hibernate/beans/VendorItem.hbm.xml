@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>  
+<!DOCTYPE hibernate-mapping PUBLIC  
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"  
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">  
+  
+ <hibernate-mapping>  
+  <class name="dao.vendor.VendorItem" table="TB_Vendor_Bill_Item">  
+    <id name="id">  
+     	<generator class="increment"></generator>  
+    </id>  
+            
+    <property name="name" column="name" ></property>  
+    <property name="salePrice" column="sale_price" ></property>  
+    <property name="purchasePrice" column="purchase_price"></property>
+    <property name="vat" column="vat"></property>
+    <property name="discount" column="discount"></property>
+    
+    <property name="quantity" column="quantity"></property>  
+    <property name="totalPurchaseAmount" column="Total_Purchase_Amount"></property>
+    
+  </class>  
+            
+ </hibernate-mapping>  

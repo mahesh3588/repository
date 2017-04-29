@@ -25,7 +25,10 @@
     <mapping resource="hibernate/beans/QuotationItem.hbm.xml"/>
     
     <mapping resource="hibernate/beans/Vendor.hbm.xml"/>
+   <!--  <mapping resource="hibernate/beans/VendorItem.hbm.xml"/> -->
     
+    <mapping class="dao.vendor.VendorBill"/>
+    <mapping class="dao.vendor.VendorItem"/>
     
   </session-factory>
 </hibernate-configuration>
