@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -37,6 +39,7 @@ public class VendorItem {
 	private Integer quantity;
 	private Double totalPurchaseAmount;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="billId")
     private VendorBill vendorBill;

@@ -6,11 +6,13 @@ package dao.vendor;
  */
 
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,6 +39,7 @@ public class VendorBill {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="vendor_bill_seq")
     private Long billId;
 	
+    private Date date;
     
     private Double totalPurchaseAmount=0.0;
     private Double totalDiscountAmount=0.0;
@@ -46,7 +49,8 @@ public class VendorBill {
     private Integer vendorId;
     private String vendorName;
     
-    @OneToMany(mappedBy="vendorBill",cascade=CascadeType.ALL)
+    
+    @OneToMany(mappedBy="vendorBill",cascade=CascadeType.ALL,fetch=FetchType.EAGER )
     private List<VendorItem>  billItemList;
     
     public void setBillId(Long billId) {
@@ -55,6 +59,13 @@ public class VendorBill {
     public Long getBillId() {
         return billId;
     }
+    
+    public void setDate(Date date) {
+		this.date = date;
+	}
+    public Date getDate() {
+		return date;
+	}
     
     public List<VendorItem> getBillItemList() {
         return billItemList;

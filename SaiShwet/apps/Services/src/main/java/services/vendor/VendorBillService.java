@@ -29,9 +29,9 @@ public class VendorBillService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addVendor(VendorBill vendorBill){
-		System.out.println("vendor add service");
+		System.out.println("vendor bill add service");
 		int status = 500;
-		Integer id =0;
+		Long id =0L;
 		try {
 			id = new VendorBillUtil().add(vendorBill);
 			status=200;
@@ -62,21 +62,21 @@ public class VendorBillService {
 
 
 	@GET
-	@Path("/getByID")
+	@Path("/getByVID")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getVendorById(@QueryParam("vendorBillId") String vendorBillId){
+	public Response getVendorById(@QueryParam("vendorBillId") String vendorId){
 		int status = 500;
-		VendorBill vendorBill=null;
+		List<VendorBill> vendorBills=null;
 		try {
-			int id=Integer.parseInt(vendorBillId);
-			vendorBill=new VendorBillUtil().get(id);
+			int vid=Integer.parseInt(vendorId);
+			vendorBills=new VendorBillUtil().getVendorBills(vid);
 			status=200;
 		} catch (DAOException e) {
 			status = 500;
 			e.printStackTrace();
 		}
-		return Response.status(status).entity(vendorBill).build();
+		return Response.status(status).entity(vendorBills).build();
 	}
 	
 	@GET

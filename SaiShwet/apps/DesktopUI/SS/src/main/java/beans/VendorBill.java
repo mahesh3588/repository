@@ -5,6 +5,7 @@
  */
 package beans;
 
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -14,19 +15,29 @@ import java.util.List;
 public class VendorBill {
     
     private Long billId;
-    private List<VendorItem>  billItemList;
+    private Date date;
     private Double totalPurchaseAmount=0.0;
     private Double totalDiscountAmount=0.0;
     private Double totalBillAmount=0.0;
     private Double totalPayableBillAmount=0.0;
     private Double vat=0.0;
-    private Vendor vendor;
+    private Integer vendorId;
+    private String vendorName;
     
+    private List<VendorItem>  billItemList;
+        
     public void setBillId(Long billId) {
         this.billId = billId;
     }
     public Long getBillId() {
         return billId;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    public Date getDate() {
+        return date;
     }
     
     public List<VendorItem> getBillItemList() {
@@ -77,14 +88,20 @@ public class VendorBill {
         this.vat = vat;
     }
 
-    public Vendor getVendor() {
-        return vendor;
+    public Integer getVendorId() {
+        return vendorId;
     }
 
-    public void setVendor(Vendor vendor) {
-        this.vendor = vendor;
+    public void setVendorId(Integer vendorId) {
+        this.vendorId = vendorId;
     }
-    
-    
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
     
 }

@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -7,17 +7,23 @@ package view.vendor;
 
 import beans.Item;
 import beans.Vendor;
+import beans.VendorBill;
 import beans.VendorItem;
 import java.awt.event.KeyEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javafx.scene.input.KeyCode;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import services.item.ItemClient;
+import services.vendor.VendorBillClient;
 import services.vendor.VendorClient;
 
 /**
@@ -33,6 +39,8 @@ public class AddVendorBills extends javax.swing.JPanel {
     Double totalDiscountAmount=0.0;
     Double totalBillAmount=0.0;
     
+    SimpleDateFormat sdf=new SimpleDateFormat("dd-MM-yyyy");
+    
     public AddVendorBills() {
         initComponents();
         setUp();
@@ -40,6 +48,14 @@ public class AddVendorBills extends javax.swing.JPanel {
     
     private void setUp(){
         try {
+            totalPurchaseAmount=0.0;
+            totalDiscountAmount=0.0;
+            totalBillAmount=0.0;
+            
+            Date d=new Date();
+            String dateString = sdf.format(d);
+            textDate.setText(dateString);
+            
             billItemList=new ArrayList<>();
             
             comboVendorName.removeAllItems();
@@ -112,6 +128,7 @@ public class AddVendorBills extends javax.swing.JPanel {
             Item item=itemOptional.get();
             textItemId.setText(item.getId().toString());
             textItemName.setText(item.getName());
+            textDiscount.setText(item.getDiscount().toString());
             textPurchasePrise.setText(item.getPurchasePrice().toString());
             textQuantity.setText("0");
             textSalePrise.setText(item.getSalePrice().toString());
@@ -132,6 +149,23 @@ public class AddVendorBills extends javax.swing.JPanel {
         textSalePrise.setText("");
         textVat.setText("");
         textTotalPurchasePrise.setText("");
+    }
+    
+    private void resetPanel(){
+        textBillAmount.setText("");
+        textBillVat.setText("");
+        textPayableBillAmount.setText("");
+        textTotalBillAmout.setText("");
+        textTotalPurchasePrise.setText("");
+        textTotalBillDiscount.setText("");
+        billItemList=new ArrayList<>();
+        
+        while(tableBillingItems.getRowCount()!=0)
+            ((DefaultTableModel)tableBillingItems.getModel()).removeRow(0);
+        
+        tableBillingItems.repaint();
+        tableBillingItems.revalidate();
+        
     }
     
     private Boolean validateEmpty(){
@@ -189,7 +223,7 @@ public class AddVendorBills extends javax.swing.JPanel {
         tableBillingItems = new javax.swing.JTable();
         textTotalBillAmout = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        totalBillDiscount = new javax.swing.JTextField();
+        textTotalBillDiscount = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         textBillAmount = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
@@ -197,6 +231,10 @@ public class AddVendorBills extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         textPayableBillAmount = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
+        buttonAddBill = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        textDate = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -223,10 +261,10 @@ public class AddVendorBills extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboVendorName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 49, Short.MAX_VALUE))
+                .addGap(0, 17, Short.MAX_VALUE))
         );
 
-        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, -1, -1));
+        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 80));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Item"));
 
@@ -383,7 +421,7 @@ public class AddVendorBills extends javax.swing.JPanel {
 
         jLabel10.setText("Total Amount");
         jPanel3.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 250, 90, 20));
-        jPanel3.add(totalBillDiscount, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 280, 110, -1));
+        jPanel3.add(textTotalBillDiscount, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 280, 110, -1));
 
         jLabel11.setText("Total Discount");
         jPanel3.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 280, 70, 20));
@@ -414,7 +452,41 @@ public class AddVendorBills extends javax.swing.JPanel {
         jLabel14.setText("Payable Amount");
         jPanel3.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 377, 90, 17));
 
+        buttonAddBill.setText("Add Bill");
+        buttonAddBill.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAddBillActionPerformed(evt);
+            }
+        });
+        jPanel3.add(buttonAddBill, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, -1, -1));
+
         add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 10, 570, 410));
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Date"));
+
+        jLabel15.setText("(dd-MM-yyyy)");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(textDate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(51, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15))
+                .addGap(0, 7, Short.MAX_VALUE))
+        );
+
+        add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 280, 50));
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemSearchKeyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemSearchKeyActionPerformed
@@ -452,13 +524,6 @@ public class AddVendorBills extends javax.swing.JPanel {
 
     private void buttonAddItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddItemActionPerformed
        VendorItem vendorItem=null;
-       
-//        if (billItemList.size() > 0) {
-//            vendorItem = billItemList.stream()
-//                    .filter(item -> item.getId() == Integer.parseInt(textItemId.getText()))
-//                    .findFirst()
-//                    .get();
-//        }
        
        if(vendorItem==null){
             vendorItem=new VendorItem();
@@ -513,6 +578,42 @@ public class AddVendorBills extends javax.swing.JPanel {
         calculatePayableAmount();
     }//GEN-LAST:event_textBillVatKeyTyped
 
+    private void buttonAddBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddBillActionPerformed
+        VendorBill vendorBill=new VendorBill();
+        vendorBill.setBillItemList(billItemList);
+        vendorBill.setTotalBillAmount(Double.parseDouble(textBillAmount.getText()));
+        vendorBill.setTotalDiscountAmount(Double.parseDouble(textTotalBillDiscount.getText()));
+        vendorBill.setTotalPayableBillAmount(Double.parseDouble(textPayableBillAmount.getText()));
+        vendorBill.setTotalPurchaseAmount(Double.parseDouble(textTotalBillAmout.getText()));//
+        vendorBill.setVat(Double.parseDouble(textBillVat.getText()));
+        String dateString=textDate.getText();
+        try {
+            Date date=sdf.parse(dateString);
+            java.sql.Date sqlDate=new java.sql.Date(date.getTime());
+            vendorBill.setDate(sqlDate);
+        } catch (ParseException ex) {
+            Logger.getLogger(AddVendorBills.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        String vendorName=comboVendorName.getSelectedItem().toString();
+        Vendor selectedVendor=vendorList.stream().filter(vendor->vendor.getName().equals(vendorName)).findFirst().get();
+        vendorBill.setVendorId(selectedVendor.getId());
+        vendorBill.setVendorName(selectedVendor.getName());
+        VendorBillClient vendorBillClient=new VendorBillClient();
+        
+        Integer billId = vendorBillClient.add(vendorBill);
+        
+        if(billId>0){
+            JOptionPane.showMessageDialog(null, "Vendor Bill added successfully");
+        }else{
+            JOptionPane.showMessageDialog(null, "Unable to add vendor bill");
+        }
+        resetItemTexts();
+        setUp();
+        resetPanel();
+        
+    }//GEN-LAST:event_buttonAddBillActionPerformed
+
     
     
     private void calculateTotals(){
@@ -528,7 +629,7 @@ public class AddVendorBills extends javax.swing.JPanel {
         totalBillAmount=totalPurchaseAmount-totalDiscountAmount;
         
         textTotalBillAmout.setText(totalPurchaseAmount.toString());
-        totalBillDiscount.setText(totalDiscountAmount.toString());
+        textTotalBillDiscount.setText(totalDiscountAmount.toString());
         textBillAmount.setText(totalBillAmount+"");
         textBillVat.setText("0.0");
         textPayableBillAmount.setText(totalBillAmount+"");
@@ -565,6 +666,7 @@ public class AddVendorBills extends javax.swing.JPanel {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonAddBill;
     private javax.swing.JButton buttonAddItem;
     private javax.swing.JComboBox<String> comboVendorName;
     private javax.swing.JTextField itemSearchKey;
@@ -574,6 +676,7 @@ public class AddVendorBills extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -585,6 +688,7 @@ public class AddVendorBills extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> listItemNames;
@@ -592,6 +696,7 @@ public class AddVendorBills extends javax.swing.JPanel {
     private javax.swing.JTable tableBillingItems;
     private javax.swing.JTextField textBillAmount;
     private javax.swing.JTextField textBillVat;
+    private javax.swing.JTextField textDate;
     private javax.swing.JTextField textDiscount;
     private javax.swing.JTextField textItemId;
     private javax.swing.JTextField textItemName;
@@ -600,8 +705,8 @@ public class AddVendorBills extends javax.swing.JPanel {
     private javax.swing.JTextField textQuantity;
     private javax.swing.JTextField textSalePrise;
     private javax.swing.JTextField textTotalBillAmout;
+    private javax.swing.JTextField textTotalBillDiscount;
     private javax.swing.JTextField textTotalPurchasePrise;
     private javax.swing.JTextField textVat;
-    private javax.swing.JTextField totalBillDiscount;
     // End of variables declaration//GEN-END:variables
 }
