@@ -15,6 +15,8 @@ import beans.Stock;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.sql.Date;
 import java.text.DecimalFormat;
@@ -27,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -35,6 +38,7 @@ import services.billing.BillingClient;
 import services.item.ItemClient;
 import services.item.stocks.StockClient;
 import services.ledger.LedgerClient;
+import view.PrintUtil;
 import view.customer.CustomerSearch;
 
 /**
@@ -99,6 +103,7 @@ public class SalesPanel extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         menuPanel = new javax.swing.JPanel();
+        buttonBackup = new javax.swing.JButton();
         bodyPanel = new javax.swing.JPanel();
         panelHead = new javax.swing.JPanel();
         labelHead = new javax.swing.JLabel();
@@ -148,15 +153,28 @@ public class SalesPanel extends javax.swing.JPanel {
 
         menuPanel.setBackground(new java.awt.Color(51, 153, 255));
 
+        buttonBackup.setText("Backup");
+        buttonBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonBackupActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout menuPanelLayout = new javax.swing.GroupLayout(menuPanel);
         menuPanel.setLayout(menuPanelLayout);
         menuPanelLayout.setHorizontalGroup(
             menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 89, Short.MAX_VALUE)
+            .addGroup(menuPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(buttonBackup)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         menuPanelLayout.setVerticalGroup(
             menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(menuPanelLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(buttonBackup)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         bodyPanel.setBackground(new java.awt.Color(204, 204, 255));
@@ -181,6 +199,8 @@ public class SalesPanel extends javax.swing.JPanel {
                 .addComponent(labelHead)
                 .addGap(0, 11, Short.MAX_VALUE))
         );
+
+        panelCustomer.setPreferredSize(new java.awt.Dimension(563, 112));
 
         jLabel1.setText("Customer Id");
 
@@ -276,15 +296,16 @@ public class SalesPanel extends javax.swing.JPanel {
                         .addGroup(panelCustomerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(jLabel5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panelCustomerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(textCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textBalance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(textContact2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(textBalance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(textCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 10, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCustomerLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(panelSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addGap(1, 1, 1))
         );
 
         panelItems.setBorder(javax.swing.BorderFactory.createTitledBorder("Items"));
@@ -498,7 +519,7 @@ public class SalesPanel extends javax.swing.JPanel {
         panelBillMemo.setLayout(panelBillMemoLayout);
         panelBillMemoLayout.setHorizontalGroup(
             panelBillMemoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
             .addGroup(panelBillMemoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelBillMemoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -592,25 +613,26 @@ public class SalesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelHead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelCustomer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelCustomer, javax.swing.GroupLayout.DEFAULT_SIZE, 959, Short.MAX_VALUE)
                     .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addGap(4, 4, 4)
                         .addComponent(panelItems, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panelBillMemo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         bodyPanelLayout.setVerticalGroup(
             bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addComponent(panelHead, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(11, 11, 11)
                 .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panelItems, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(panelBillMemo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -730,7 +752,7 @@ public class SalesPanel extends javax.swing.JPanel {
     private void buttonSearchCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSearchCustomerActionPerformed
        CustomerSearch panelCustomerSearch=new CustomerSearch();
        panelCustomerSearch.setLocation(100, 30);
-       panelCustomerSearch.setSize(400, 128);
+       panelCustomerSearch.setSize(400, 122);
        
        panelSearch.setLayout(new BorderLayout());
        panelSearch.add(panelCustomerSearch);
@@ -802,12 +824,30 @@ public class SalesPanel extends javax.swing.JPanel {
             int quotationId= new BillingClient().generateQuotation(order);
             System.out.println("Qoutation id = "+quotationId);
             // do printing logic here
-            JFrame bill = new JFrame();
-            bill.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-            BillPanel billPanel = new BillPanel(quotationId);
-            bill.add(billPanel);
-            //bill.setSize(billPanel.getSize());
-            bill.setVisible(true);
+//            JFrame billFrame = new JFrame();
+//            billFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+//            BillPanel billPanel = new BillPanel(quotationId,billFrame);
+//            billFrame.add(billPanel);
+//            //bill.setSize(billPanel.getSize());
+//            billFrame.setVisible(true);
+//            
+            JFrame frameBill=new JFrame();
+            frameBill.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+            PrintBill billPanel = new PrintBill(quotationId,frameBill);
+            frameBill.setLayout(null);
+            billPanel.setBounds(3, 5, 640, billPanel.getBillPanelHeight());
+            frameBill.add(billPanel);
+            JButton buttonPrint=new JButton("Print");
+            buttonPrint.setBounds(650,20,80,30);
+            buttonPrint.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PrintUtil p=new PrintUtil(billPanel);
+                        p.print();
+                    }
+            });
+            frameBill.add(buttonPrint);
+            frameBill.setVisible(true);
             resetPanel();
         }else{
             
@@ -819,12 +859,26 @@ public class SalesPanel extends javax.swing.JPanel {
         if(order!=null){
             int invoiceNo= new BillingClient().generateBill(order);
             // do printing logic here
-            JFrame bill = new JFrame();
-            bill.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-            BillPanel billPanel = new BillPanel(Integer.parseInt(textCustomerId.getText()),invoiceNo);
-            bill.add(billPanel);
+            JFrame billframe = new JFrame();
+            billframe.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+            PrintBill billPanel = new PrintBill(Integer.parseInt(textCustomerId.getText()),invoiceNo,billframe);
+            billframe.setLayout(null);
+            billPanel.setBounds(3, 5, 640, 500);
+            billframe.add(billPanel);
+            
+            JButton buttonPrint=new JButton("Print");
+            buttonPrint.setBounds(650,20,80,30);
+            buttonPrint.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PrintUtil p=new PrintUtil(billPanel);
+                        p.print();
+                    }
+            });
+            billframe.add(buttonPrint);
             //bill.setSize(billPanel.getSize());
-            bill.setVisible(true);
+            
+            billframe.setVisible(true);
             resetPanel();
         }
     }//GEN-LAST:event_buttonBillActionPerformed
@@ -868,6 +922,11 @@ public class SalesPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_textGrossTotalActionPerformed
 
+    private void buttonBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonBackupActionPerformed
+        int res =JOptionPane.showConfirmDialog(panelCustomer, "Are you sure you want to backup ?");
+        System.out.println("res = "+res);
+    }//GEN-LAST:event_buttonBackupActionPerformed
+
     private void resetPanel(){
         try {
             this.removeAll();
@@ -903,9 +962,6 @@ public class SalesPanel extends javax.swing.JPanel {
                         int i=0;
                         while(i<=billingRowCount){
                             if(itemName.equalsIgnoreCase(tableBillItems.getValueAt(i, 1).toString())){
-                                //double grossTotal=Double.parseDouble(decimalFormat.format(item.getSalePrice()*itemQuantity));
-                                //double netItemTotal=Double.parseDouble(decimalFormat.format((grossTotal - ((grossTotal*item.getDiscount())/100))));
-                                //netBillAmount=Double.parseDouble(textBillAmount.getText())+((item.getSalePrice()*item.getDiscount()/100)*additionalQuantity);
                                 double grossTotal=Double.parseDouble(decimalFormat.format(item.getSalePrice()*itemQuantity));
                                 double netItemTotal=Double.parseDouble(decimalFormat.format((grossTotal - ((grossTotal*item.getDiscount())/100))));
                                 double prevBalance=0.0;
@@ -914,7 +970,6 @@ public class SalesPanel extends javax.swing.JPanel {
                                 double oldGrossItemTotal=Double.parseDouble(tableBillItems.getValueAt(i, 5).toString());
                                 grossBillAmount=grossBillAmount+grossTotal-oldGrossItemTotal;
                                 netBillAmount=netBillAmount+netItemTotal-oldItemTotal;
-                                System.out.println("net = "+netBillAmount+"  "+(item.getSalePrice()*item.getDiscount()/100)*additionalQuantity);
                                 prevBalance=Double.parseDouble(textBalance.getText());
                                 totalBalance=netBillAmount+prevBalance;
                                 double itemProfit=(item.getSalePrice()-(item.getSalePrice()*item.getDiscount())/100-item.getPurchasePrice())*additionalQuantity + Double.parseDouble(labelProfit.getText());
@@ -1018,6 +1073,8 @@ public class SalesPanel extends javax.swing.JPanel {
     private void initBillingComponent() throws Exception {
         billingRowCount = 0;
         netBillAmount=0.0;
+        grossBillAmount=0.0;
+        
         billingItems = new HashMap<Integer, Integer>();
         itemsList = new ItemClient().get();
         itemsStock = new StockClient().get();
@@ -1102,6 +1159,7 @@ private Order buidOrder(){
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addItem;
     private javax.swing.JPanel bodyPanel;
+    private javax.swing.JButton buttonBackup;
     private javax.swing.JButton buttonBill;
     private javax.swing.JButton buttonDelete;
     private javax.swing.JButton buttonQuotation;

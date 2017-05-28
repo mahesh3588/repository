@@ -11,12 +11,15 @@ import beans.Ledger;
 import beans.Quotation;
 import beans.QuotationItem;
 import beans.SoldItem;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import services.billing.BillingClient;
@@ -36,39 +39,47 @@ public class BillPanel extends javax.swing.JPanel {
     private Quotation quotation;
     private Set<QuotationItem> quotationItems;
     private String billType;
+    private JFrame containerFrame;
+    private Dimension tableBillItemsDimension;
     /**
      * Creates new form BillPanel
      */
     public BillPanel() {
-        initComponents();
+       
     }
 
-    public BillPanel(Integer customerId,Integer invoiceNumber) {
-        initComponents();
+    public BillPanel(Integer customerId,Integer invoiceNumber,JFrame containerFrame) {
         customerLedger=new LedgerClient().getCustomerLedger(customerId);
         customerDetails= customerLedger.getCustomerDetails();
         List<Ledger> ledgerList=customerLedger.getCustomerLedger();
         ledger=ledgerList.stream().filter(t->t.getInvoiceNumber()==invoiceNumber).findFirst().get();
         lastLedger=ledgerList.get(ledgerList.size()-2);
-        loadBillItemTable();
+        
+//        Integer height=0,width=465;
+//        height=ledger.getSoldItems().size()*10;
+//        tableBillItemsDimension=new Dimension(width, height);
+        
+        initComponents();
+        labelInvoiceNo.setText(invoiceNumber.toString());
+        labelInvoiceDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(ledger.getDate()));
+        this.containerFrame=containerFrame;
         loadCustomerDetails();
-        loadLedgerDetails();
     }
     
   
     
-    public BillPanel(Integer quotationNumber){
+    public BillPanel(Integer quotationNumber,JFrame containerFrame){
         initComponents();
+        this.containerFrame=containerFrame;
         try {
             quotation=new BillingClient().getQuotation(quotationNumber);
             customerDetails= (Customer)new CustomerClient().getByID(quotation.getCustomerId());
-            loadQuotationItemTable();
             loadCustomerDetails();
-            loadQuotationDetails();
+            labelInvoiceNo.setText(quotationNumber.toString());
+            labelInvoiceDate.setText(new SimpleDateFormat("dd-MM-yyyy").format(quotation.getDate()));
         } catch (Exception e) {
             e.printStackTrace();
         }
-       
     }
 
     
@@ -83,128 +94,10 @@ public class BillPanel extends javax.swing.JPanel {
         }
     }
     
-    private void loadLedgerDetails(){
-        try {
-            
-            labelInvoiceNo.setText(ledger.getInvoiceNumber().toString());
-            labelInvoiceDate.setText(ledger.getDate().toString());
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private void loadBillItemTable(){
-        try {
-            Set<SoldItem> soldItems=ledger.getSoldItems();
-            DefaultTableModel defaultTableModel=(DefaultTableModel)tableBillItems.getModel();
-            int i=0;
-            Dimension tableSize=tableBillItems.getMaximumSize();
-            
-            for(SoldItem soldItem:soldItems){
-                System.out.println(soldItem.getItemName()+"  "+soldItem.getQuantity());
-                Double grossTotal=soldItem.getPrice()*soldItem.getQuantity();
-                grossTotal=Double.parseDouble(new DecimalFormat(".##").format(grossTotal));
-                Object[] rowData={i+1,
-                        soldItem.getItemName(),
-                        soldItem.getPrice(),
-                        soldItem.getQuantity(),
-                        grossTotal
-                };
-                jScrollPane2.setSize(((Double)tableSize.getWidth()).intValue(), ((Double)tableSize.getHeight()).intValue()+5 );
-                defaultTableModel.addRow(rowData);
-                i++;
-            }
-            Object[] rowData1={"",
-                       "",
-                       "",
-                       "Bill Amount",
-                       ledger.getBillAmount()
-               };
-            defaultTableModel.addRow(rowData1);
-            Object[] rowData2={"",
-                      "",
-                      "",
-                      "Previous Balance",
-                      lastLedger.getBalance()
-              };
-            defaultTableModel.addRow(rowData2);
-            Object[] rowData3={"",
-                       "",
-                       "",
-                       "Total Balance",
-                       ledger.getBillAmount()+lastLedger.getBalance()
-               };
-            defaultTableModel.addRow(rowData3);
-            Object[] rowData4={"",
-                      "",
-                      "",
-                      "Paid Amount",
-                      ledger.getPaidAmount()
-              };
-            defaultTableModel.addRow(rowData4);
-            repaint();
-            this.updateUI();
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Unable to load bill items");
-        }
-    }
-    
-    
-    private void loadQuotationItemTable(){
-        try {
-            Set<QuotationItem> quotationItems=quotation.getQuotationItem();
-            DefaultTableModel defaultTableModel=(DefaultTableModel)tableBillItems.getModel();
-            int i=0;
-            
-            for(QuotationItem quotationItem:quotationItems){
-                Double grossTotal=quotationItem.getPrice()*quotationItem.getQuantity();
-                grossTotal=Double.parseDouble(new DecimalFormat(".##").format(grossTotal));
-                Object[] rowData={i+1,
-                        quotationItem.getItemName(),
-                        quotationItem.getPrice(),
-                        quotationItem.getQuantity(),
-                        grossTotal
-                };
-                defaultTableModel.addRow(rowData);
-                i++;
-            }
-             Object[] rowData1={"",
-                        "",
-                        "",
-                        "Bill Amount",
-                        quotation.getQuotationAmount()
-                };
-             defaultTableModel.addRow(rowData1);
-              
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Unable to load Quotation items");
-        }
-    } 
-    
-    private void loadQuotationDetails(){
-        try {
-            lableType.setText("Quotation No");
-            labelInvoiceNo.setText(quotation.getId().toString());
-            labelInvoiceDate.setText(quotation.getDate().toString());
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelBillContainer = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         panelCustomer = new javax.swing.JPanel();
@@ -221,12 +114,8 @@ public class BillPanel extends javax.swing.JPanel {
         labelInvoiceNo = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         labelInvoiceDate = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tableBillItems = new javax.swing.JTable();
-        buttonPrint = new javax.swing.JButton();
-        buttonCancel = new javax.swing.JButton();
 
-        panelBillContainer.setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new java.awt.BorderLayout());
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -331,8 +220,8 @@ public class BillPanel extends javax.swing.JPanel {
                         .addComponent(lableType, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(labelInvoiceNo, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 2, Short.MAX_VALUE)))
-                .addContainerGap(13, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,111 +268,11 @@ public class BillPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        tableBillItems.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Sr No", "Item Name", "Price", "Quantity", "Total"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        tableBillItems.setSelectionBackground(new java.awt.Color(153, 255, 153));
-        jScrollPane2.setViewportView(tableBillItems);
-        if (tableBillItems.getColumnModel().getColumnCount() > 0) {
-            tableBillItems.getColumnModel().getColumn(0).setPreferredWidth(8);
-            tableBillItems.getColumnModel().getColumn(2).setPreferredWidth(9);
-            tableBillItems.getColumnModel().getColumn(3).setPreferredWidth(8);
-            tableBillItems.getColumnModel().getColumn(4).setPreferredWidth(10);
-        }
-
-        javax.swing.GroupLayout panelBillContainerLayout = new javax.swing.GroupLayout(panelBillContainer);
-        panelBillContainer.setLayout(panelBillContainerLayout);
-        panelBillContainerLayout.setHorizontalGroup(
-            panelBillContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        panelBillContainerLayout.setVerticalGroup(
-            panelBillContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBillContainerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                .addGap(170, 170, 170))
-        );
-
-        buttonPrint.setText("Print");
-        buttonPrint.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPrintActionPerformed(evt);
-            }
-        });
-
-        buttonCancel.setText("Cancel");
-        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonCancelActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(399, 399, 399)
-                .addComponent(buttonPrint)
-                .addGap(18, 18, 18)
-                .addComponent(buttonCancel)
-                .addContainerGap(160, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelBillContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelBillContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(buttonPrint)
-                    .addComponent(buttonCancel))
-                .addGap(0, 153, Short.MAX_VALUE))
-        );
+        add(jPanel2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void buttonPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPrintActionPerformed
-        try {
-            
-           // panelBillContainer.printAll(panelBillContainer.getGraphics());
-            PrintUtil.printComponent(panelBillContainer);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_buttonPrintActionPerformed
-
-    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        try {
-            //this.getParent().fire
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_buttonCancelActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonCancel;
-    private javax.swing.JButton buttonPrint;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -492,7 +281,6 @@ public class BillPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel labelCustomerAddress;
     private javax.swing.JLabel labelCustomerEmail;
     private javax.swing.JLabel labelCustomerMobile;
@@ -500,8 +288,6 @@ public class BillPanel extends javax.swing.JPanel {
     private javax.swing.JLabel labelInvoiceDate;
     private javax.swing.JLabel labelInvoiceNo;
     private javax.swing.JLabel lableType;
-    private javax.swing.JPanel panelBillContainer;
     private javax.swing.JPanel panelCustomer;
-    private javax.swing.JTable tableBillItems;
     // End of variables declaration//GEN-END:variables
 }

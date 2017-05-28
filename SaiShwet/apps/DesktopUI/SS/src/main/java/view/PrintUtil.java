@@ -63,6 +63,7 @@ public class PrintUtil implements Printable {
 	    try 
 	    {
 	      printJob.print();
+              
 	    } catch(PrinterException pe)
 	    {
 	      System.out.println("Error printing: " + pe);

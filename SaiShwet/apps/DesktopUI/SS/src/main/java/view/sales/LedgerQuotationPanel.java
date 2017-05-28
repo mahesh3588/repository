@@ -10,16 +10,21 @@ import beans.CustomerLedger;
 import beans.Ledger;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import services.ledger.LedgerClient;
+import view.PrintUtil;
 
 /**
  *
@@ -411,14 +416,41 @@ public class LedgerQuotationPanel extends javax.swing.JPanel {
             if(!textCustomerId.getText().equalsIgnoreCase("")){
                customerId=Integer.parseInt(textCustomerId.getText());
                int selectedRow=tableLedger.getSelectedRow();
-               System.out.println("row = "+selectedRow);
                Integer invcNo=(Integer)tableLedger.getValueAt(selectedRow, 0);
-               System.out.println("invc = "+invcNo);
-               BillPanel billS=new BillPanel(customerId, invcNo);
-               JFrame bill = new JFrame();
-               bill.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-               bill.add(billS);
-               bill.setVisible(true);
+//               BillFrame bills=new BillFrame(customerId, invcNo, null);
+//               bills.setVisible(true);
+//               
+               
+               JFrame billFrame = new JFrame();
+               
+               
+               billFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+               PrintBill bills=new PrintBill(customerId, invcNo, billFrame);
+               billFrame.setLayout(null);
+               JScrollPane schroll=new JScrollPane(bills);
+               schroll.setBounds(3, 5, 640, bills.getBillPanelHeight());
+               billFrame.add(schroll);
+               
+               JButton buttonPrint=new JButton("Print");
+               buttonPrint.setBounds(650,20,80,30);
+               buttonPrint.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PrintUtil p=new PrintUtil(bills.getBillPanel());
+                        p.print();
+                    }
+               });
+               billFrame.add(buttonPrint);
+               billFrame.setVisible(true);
+               /*JFrame billFrame = new JFrame();
+               //BillPanel billS=new BillPanel(customerId, invcNo,billFrame);
+               billFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+               BillQuotationPrintPanel bills=new BillQuotationPrintPanel(customerId, invcNo, billFrame);
+               billFrame.setLayout(null);
+               bills.setBounds(0, 0, 500, 500);
+               
+               billFrame.add(bills);
+               billFrame.setVisible(true);*/
             }
         }
         

@@ -7,11 +7,15 @@ package view.sales;
 
 import beans.Quotation;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 import services.ledger.LedgerClient;
+import view.PrintUtil;
 
 /**
  *
@@ -126,8 +130,21 @@ public class QuotationPanel extends javax.swing.JPanel {
                 Integer qid=(Integer)tableQuotations.getValueAt(tableQuotations.getSelectedRow(), 0);
                 JFrame frameBill=new JFrame();
                 frameBill.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-                frameBill.add(new BillPanel(qid));
-                frameBill.setVisible(true);
+                PrintBill billPanel=new PrintBill(qid,frameBill);
+                frameBill.setLayout(null);
+                billPanel.setBounds(3, 5, 640, billPanel.getHeight());
+                frameBill.add(billPanel);
+                JButton buttonPrint=new JButton("Print");
+                buttonPrint.setBounds(650,20,80,30);
+                buttonPrint.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PrintUtil p=new PrintUtil(billPanel);
+                        p.print();
+                    }
+               });
+               frameBill.add(buttonPrint);
+               frameBill.setVisible(true);
             } catch (Exception e) {
             }
             
