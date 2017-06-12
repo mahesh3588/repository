@@ -422,8 +422,6 @@ public class LedgerQuotationPanel extends javax.swing.JPanel {
 //               
                
                JFrame billFrame = new JFrame();
-               
-               
                billFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
                PrintBill bills=new PrintBill(customerId, invcNo, billFrame);
                billFrame.setLayout(null);

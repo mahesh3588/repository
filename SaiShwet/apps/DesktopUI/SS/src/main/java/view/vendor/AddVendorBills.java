@@ -353,6 +353,12 @@ public class AddVendorBills extends javax.swing.JPanel {
 
         jLabel4.setText("Total");
         panelItemDetails.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(16, 179, 60, -1));
+
+        textSalePrise.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                textSalePriseFocusLost(evt);
+            }
+        });
         panelItemDetails.add(textSalePrise, new org.netbeans.lib.awtextra.AbsoluteConstraints(106, 217, 79, -1));
 
         jLabel5.setText("% Discount");
@@ -613,6 +619,10 @@ public class AddVendorBills extends javax.swing.JPanel {
         resetPanel();
         
     }//GEN-LAST:event_buttonAddBillActionPerformed
+
+    private void textSalePriseFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textSalePriseFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textSalePriseFocusLost
 
     
     

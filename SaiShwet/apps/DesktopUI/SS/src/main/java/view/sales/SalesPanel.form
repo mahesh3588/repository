@@ -586,23 +586,17 @@
                     <Component class="javax.swing.JTable" name="tableBillItems">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="7" rowCount="0">
-                            <Column editable="false" title="SR" type="java.lang.Integer"/>
+                          <Table columnCount="6" rowCount="0">
                             <Column editable="false" title="Item Name" type="java.lang.String"/>
                             <Column editable="false" title="Qunatity" type="java.lang.Integer"/>
                             <Column editable="true" title="Price" type="java.lang.Double"/>
                             <Column editable="false" title="Discount" type="java.lang.Double"/>
-                            <Column editable="true" title="Gross Amount" type="java.lang.Double"/>
-                            <Column editable="true" title="Net Amount" type="java.lang.Double"/>
+                            <Column editable="false" title="Gross Amount" type="java.lang.Double"/>
+                            <Column editable="false" title="Net Amount" type="java.lang.Double"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                           <TableColumnModel selectionModel="0">
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
                             <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                               <Title/>
                               <Editor/>
@@ -766,6 +760,7 @@
                     </Property>
                   </Properties>
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="textDiscountFocusLost"/>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textDiscountActionPerformed"/>
                   </Events>
                 </Component>

@@ -108,7 +108,7 @@ public class ItemPanel extends JPanel {
                 .addContainerGap()
                 .addComponent(menuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(bodyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bodyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -158,14 +158,13 @@ public class ItemPanel extends JPanel {
     }//GEN-LAST:event_buttonAddActionPerformed
 
     private void buttonViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonViewActionPerformed
-        JPanel containerPanale=new JPanel();
+        
         //containerPanale.setBackground(Color.BLUE);
-        containerPanale.setSize(bodyPanel.getSize());
-        JPanel viewItemPanel=new ViewItemPanel();
-        viewItemPanel.setSize(containerPanale.getSize());
-        containerPanale.add(viewItemPanel, BorderLayout.CENTER);
+        ViewItemPanel viewItemPanel=new ViewItemPanel();
+        viewItemPanel.setSize(bodyPanel.getSize());
         bodyPanel.removeAll();
-        bodyPanel.add(containerPanale,BorderLayout.CENTER);
+        bodyPanel.setLayout(new BorderLayout());
+        bodyPanel.add(viewItemPanel);
         repaint();
         revalidate();
            

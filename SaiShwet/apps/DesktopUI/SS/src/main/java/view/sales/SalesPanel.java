@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -33,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import services.billing.BillingClient;
 import services.item.ItemClient;
@@ -51,11 +53,10 @@ public class SalesPanel extends javax.swing.JPanel {
     static List<Object> itemsStock;
     private DefaultTableModel itemTableTableModel;
 
-    private Integer billingRowCount = 0;
     
     HashMap<Integer, Integer> billingItems;
     HashMap<Integer, HashMap<String,Double>> billingItemsDetails;
-    Double grossBillAmount=0.0,netBillAmount=0.0;
+    Double grossBillAmount=0.0,netBillAmount=0.0,billDiscount=0.0;
   
     DecimalFormat decimalFormat=new DecimalFormat(".##");
     
@@ -398,14 +399,14 @@ public class SalesPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "SR", "Item Name", "Qunatity", "Price", "Discount", "Gross Amount", "Net Amount"
+                "Item Name", "Qunatity", "Price", "Discount", "Gross Amount", "Net Amount"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false, true, true
+                false, false, true, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -498,6 +499,11 @@ public class SalesPanel extends javax.swing.JPanel {
         jLabel10.setText("Discount");
 
         textDiscount.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        textDiscount.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                textDiscountFocusLost(evt);
+            }
+        });
         textDiscount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textDiscountActionPerformed(evt);
@@ -773,7 +779,7 @@ public class SalesPanel extends javax.swing.JPanel {
             String itemName = (String) tableItems.getValueAt(selectedRow, 0);
             Integer itemQuantity = (Integer)tableItems.getValueAt(selectedRow, 1);
             
-            addItemToBillingTable(itemName,itemQuantity);
+            addBillingItem(itemName,itemQuantity);
         }
         //JOptionPane.showMessageDialog(null, itemName);
     }//GEN-LAST:event_addItemActionPerformed
@@ -799,7 +805,7 @@ public class SalesPanel extends javax.swing.JPanel {
                 int selectedRow = tableItems.getSelectedRow();
                 String itemName = (String) tableItems.getValueAt(selectedRow, 0);
                 Integer itemQuantity = (Integer) tableItems.getValueAt(selectedRow, 1);
-                addItemToBillingTable(itemName, itemQuantity);
+                addBillingItem(itemName, itemQuantity);
                 
                 try {
                     textItemName.setText("Search Item Here");
@@ -859,13 +865,12 @@ public class SalesPanel extends javax.swing.JPanel {
         if(order!=null){
             int invoiceNo= new BillingClient().generateBill(order);
             // do printing logic here
-            JFrame billframe = new JFrame();
+            /*JFrame billframe = new JFrame();
             billframe.setSize(Toolkit.getDefaultToolkit().getScreenSize());
             PrintBill billPanel = new PrintBill(Integer.parseInt(textCustomerId.getText()),invoiceNo,billframe);
             billframe.setLayout(null);
             billPanel.setBounds(3, 5, 640, 500);
             billframe.add(billPanel);
-            
             JButton buttonPrint=new JButton("Print");
             buttonPrint.setBounds(650,20,80,30);
             buttonPrint.addActionListener(new ActionListener() {
@@ -876,9 +881,28 @@ public class SalesPanel extends javax.swing.JPanel {
                     }
             });
             billframe.add(buttonPrint);
-            //bill.setSize(billPanel.getSize());
-            
             billframe.setVisible(true);
+            */
+            //===============================
+                JFrame billFrame = new JFrame();
+               billFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+               PrintBill bills=new PrintBill(Integer.parseInt(textCustomerId.getText()),invoiceNo,billFrame);
+               billFrame.setLayout(null);
+               JScrollPane schroll=new JScrollPane(bills);
+               schroll.setBounds(3, 5, 640, bills.getBillPanelHeight());
+               billFrame.add(schroll);
+               
+               JButton buttonPrint=new JButton("Print");
+               buttonPrint.setBounds(650,20,80,30);
+               buttonPrint.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PrintUtil p=new PrintUtil(bills.getBillPanel());
+                        p.print();
+                    }
+               });
+               billFrame.add(buttonPrint);
+               billFrame.setVisible(true);
             resetPanel();
         }
     }//GEN-LAST:event_buttonBillActionPerformed
@@ -911,11 +935,11 @@ public class SalesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_buttonDeleteActionPerformed
 
     private void tableBillItemsPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tableBillItemsPropertyChange
-       //JOptionPane.showMessageDialog(null, "Changed");
+       JOptionPane.showMessageDialog(null, "Changed");
     }//GEN-LAST:event_tableBillItemsPropertyChange
 
     private void textDiscountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textDiscountActionPerformed
-        // TODO add your handling code here:
+           setDiscountManually();
     }//GEN-LAST:event_textDiscountActionPerformed
 
     private void textGrossTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textGrossTotalActionPerformed
@@ -926,6 +950,10 @@ public class SalesPanel extends javax.swing.JPanel {
         int res =JOptionPane.showConfirmDialog(panelCustomer, "Are you sure you want to backup ?");
         System.out.println("res = "+res);
     }//GEN-LAST:event_buttonBackupActionPerformed
+
+    private void textDiscountFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textDiscountFocusLost
+        setDiscountManually();
+    }//GEN-LAST:event_textDiscountFocusLost
 
     private void resetPanel(){
         try {
@@ -940,8 +968,33 @@ public class SalesPanel extends javax.swing.JPanel {
         
     }
     
-    
-    private void addItemToBillingTable(String itemName,Integer availableQuantity) {
+    private void addItemToBillingTable() {
+                DefaultTableModel billingTablemodel = (DefaultTableModel) tableBillItems.getModel();
+                while(billingTablemodel.getRowCount()>=1){
+                    billingTablemodel.removeRow(0);
+                }
+                billingItems.keySet().forEach(itemId->{
+                    Item item=(Item)(itemsList.stream().filter(itm->((Item)itm).getId()==itemId).findFirst().get());
+                    
+                    int itemQuantity=billingItems.get(itemId);
+                    double itemTotal=item.getPurchasePrice()*itemQuantity;
+                    double itemDiscount=((item.getPurchasePrice()*itemQuantity)*item.getDiscount())/100;
+                    
+                    Object[] rowData = {
+                                    item.getName(),
+                                    itemQuantity,
+                                    item.getSalePrice(),
+                                    item.getDiscount(),
+                                    itemTotal,
+                                    itemTotal-itemDiscount
+                                   };
+                    billingTablemodel.addRow(rowData);
+                });
+                tableBillItems.repaint();
+    }
+
+     
+    private void addBillingItem(String itemName,Integer availableQuantity) {
         Integer itemQuantity = 0;
         String qnty ="";// JOptionPane.showInputDialog(null, "Please enter quantity for " + itemName);
         while(qnty.equalsIgnoreCase("")) {
@@ -953,79 +1006,59 @@ public class SalesPanel extends javax.swing.JPanel {
             for (Object itemObject : itemsList) {
                 Item item = (Item) itemObject;
                 if (item.getName().equalsIgnoreCase(itemName)) {
-
-                    DefaultTableModel billingTablemodel = (DefaultTableModel) tableBillItems.getModel();
                     if (billingItems.containsKey(item.getId())) {
-                        int additionalQuantity=itemQuantity;
                         itemQuantity=billingItems.get(item.getId()) + itemQuantity;
                         billingItems.put(item.getId(), itemQuantity);
-                        int i=0;
-                        while(i<=billingRowCount){
-                            if(itemName.equalsIgnoreCase(tableBillItems.getValueAt(i, 1).toString())){
-                                double grossTotal=Double.parseDouble(decimalFormat.format(item.getSalePrice()*itemQuantity));
-                                double netItemTotal=Double.parseDouble(decimalFormat.format((grossTotal - ((grossTotal*item.getDiscount())/100))));
-                                double prevBalance=0.0;
-                                double totalBalance=0.0;
-                                double oldItemTotal=Double.parseDouble(tableBillItems.getValueAt(i, 6).toString());
-                                double oldGrossItemTotal=Double.parseDouble(tableBillItems.getValueAt(i, 5).toString());
-                                grossBillAmount=grossBillAmount+grossTotal-oldGrossItemTotal;
-                                netBillAmount=netBillAmount+netItemTotal-oldItemTotal;
-                                prevBalance=Double.parseDouble(textBalance.getText());
-                                totalBalance=netBillAmount+prevBalance;
-                                double itemProfit=(item.getSalePrice()-(item.getSalePrice()*item.getDiscount())/100-item.getPurchasePrice())*additionalQuantity + Double.parseDouble(labelProfit.getText());
-
-                                labelProfit.setText(decimalFormat.format(itemProfit));
-                                
-                                tableBillItems.setValueAt(itemQuantity, i, 2);
-                                tableBillItems.setValueAt(grossTotal, i, 5);
-                                tableBillItems.setValueAt(netItemTotal, i, 6);
-                                
-                                textGrossTotal.setText(decimalFormat.format(grossBillAmount).toString());
-                                textDiscount.setText(decimalFormat.format(grossBillAmount-netBillAmount).toString());
-                                textBillAmount.setText(decimalFormat.format(netBillAmount).toString());
-                                textTotalBalnce.setText(decimalFormat.format(totalBalance).toString());
-                    
-                                break;
-                            }
-                            i++;
-                        }
                     } else {
                         billingItems.put(item.getId(), itemQuantity);
-                        double grossTotal=Double.parseDouble(decimalFormat.format(item.getSalePrice()*itemQuantity));
-                        double netItemTotal=Double.parseDouble(decimalFormat.format((grossTotal - ((grossTotal*item.getDiscount())/100))));
-                        double prevBalance=0.0;
-                        double totalBalance=0.0;
-                        grossBillAmount=grossBillAmount+grossTotal;
-                        netBillAmount=netBillAmount+netItemTotal;
-                        prevBalance=Double.parseDouble(textBalance.getText());
-                        totalBalance=netBillAmount+prevBalance;
-                        double itemProfit=(item.getSalePrice()-(item.getSalePrice()*item.getDiscount())/100-item.getPurchasePrice())*itemQuantity + Double.parseDouble(labelProfit.getText());
-                        
-                        labelProfit.setText(decimalFormat.format(itemProfit));
-                        Object[] rowData = {++billingRowCount,
-                            item.getName(),
-                            itemQuantity,
-                            item.getSalePrice(),
-                            item.getDiscount(),
-                            grossTotal,
-                            netItemTotal};
-
-                        billingTablemodel.addRow(rowData);
-
-                        textGrossTotal.setText(decimalFormat.format(grossBillAmount).toString());
-                        textDiscount.setText(decimalFormat.format(grossBillAmount-netBillAmount).toString());
-                        textBillAmount.setText(decimalFormat.format(netBillAmount).toString());
-                        textPreviousBalance.setText(decimalFormat.format(prevBalance).toString());
-                        textTotalBalnce.setText(decimalFormat.format(totalBalance).toString());
                     }
                     break;
                 }
             }
+            
+            addItemToBillingTable();
+            setTotals();
         }else{
             JOptionPane.showMessageDialog(null, "Available stock for "+itemName+" is "+availableQuantity+"\n You entered more than available");
         }
     }
 
+    private void setTotals(){
+        Double grossTotal=0.0;
+        Double discount=0.0;
+        Double billAmount=0.0;
+        if(billingItems.size()>0){
+            Set<Integer> itemIds=billingItems.keySet();
+            for(Integer itemId:itemIds){
+                int quantity=billingItems.get(itemId);
+                Item item =(Item)(itemsList.stream().filter(it->((Item)it).getId()==itemId).findFirst().get());
+                double itemDiscount=((item.getPurchasePrice()*quantity)*item.getDiscount())/100;
+                grossTotal=grossTotal+(item.getPurchasePrice()*quantity);
+                discount=discount+itemDiscount;
+            }
+            billAmount=grossTotal-discount;
+            grossBillAmount=grossTotal;
+            billDiscount=discount;
+            netBillAmount=grossBillAmount-billDiscount;
+            Double prevBal=Double.parseDouble(textPreviousBalance.getText());
+            textGrossTotal.setText(decimalFormat.format(grossBillAmount).toString());
+            textDiscount.setText(decimalFormat.format(billDiscount).toString());
+            textBillAmount.setText(decimalFormat.format(netBillAmount).toString());
+            textPreviousBalance.setText(decimalFormat.format(prevBal).toString());
+            textTotalBalnce.setText(decimalFormat.format(netBillAmount+prevBal).toString());
+            textPaidAmount.setText("0");
+        }
+    }
+    
+    private void setDiscountManually(){
+        Double grossTotal=Double.parseDouble(textGrossTotal.getText());
+        Double prevBalance=Double.parseDouble(textPreviousBalance.getText());
+        Double discount=Double.parseDouble(textDiscount.getText());
+        
+        textBillAmount.setText((grossTotal-discount)+"");
+        textTotalBalnce.setText((grossTotal-discount+prevBalance)+"");
+        
+    }
     
     private void loadCustomerDetail() {
         try {
@@ -1071,10 +1104,11 @@ public class SalesPanel extends javax.swing.JPanel {
     
     
     private void initBillingComponent() throws Exception {
-        billingRowCount = 0;
         netBillAmount=0.0;
         grossBillAmount=0.0;
+        billDiscount=0.0;
         
+        billingItems = new HashMap<Integer, Integer>();
         billingItems = new HashMap<Integer, Integer>();
         itemsList = new ItemClient().get();
         itemsStock = new StockClient().get();

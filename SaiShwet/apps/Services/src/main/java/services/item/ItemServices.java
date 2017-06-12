@@ -18,9 +18,6 @@ import dao.item.ItemUtil;
 @Path("/itemService")
 public class ItemServices {
 	
-	
-	
-	
 	/*@GET
 	@Path("/test")
 	public Response testService(){

@@ -189,7 +189,6 @@ public class AddItemPanel extends javax.swing.JPanel {
         
         RestClient itemServices=new ItemClient();
         
-        
         Integer itemId=itemServices.add(item);
         if(itemId>0){
             JOptionPane.showMessageDialog(null, "Item details added successfully \n Id of Item is : "+itemId);
